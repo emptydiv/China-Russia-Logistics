@@ -1,0 +1,2001 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Контейнерные грузоперевозки Китай-Россия | Прямые поставки | 7 точек отправления</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0a2463;
+            --secondary: #3e92cc;
+            --accent: #00d4aa;
+            --accent-dark: #00b894;
+            --dark: #0d1117;
+            --darker: #090c10;
+            --light: #f8f9fa;
+            --gradient: linear-gradient(135deg, #0a2463 0%, #3e92cc 100%);
+            --gradient-accent: linear-gradient(135deg, #00d4aa 0%, #3e92cc 100%);
+            --gradient-dark: linear-gradient(135deg, #090c10 0%, #0a2463 100%);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            --shadow-hover: 0 20px 50px rgba(0, 212, 170, 0.3);
+            --transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --border-radius: 20px;
+            --border-radius-sm: 10px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.6;
+            color: var(--light);
+            background-color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        /* Header & Navigation */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 25px 0;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(15px);
+            transition: var(--transition);
+            border-bottom: 1px solid rgba(0, 212, 170, 0.1);
+        }
+
+        header.scrolled {
+            padding: 15px 0;
+            box-shadow: var(--shadow);
+            background: rgba(9, 12, 16, 0.98);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--light);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-icon {
+            color: var(--accent);
+            font-size: 2.5rem;
+            text-shadow: 0 0 15px rgba(0, 212, 170, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: var(--transition);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+
+        .mobile-menu{
+            display: none;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .mobile-menu-btn:hover {
+            color: var(--accent);
+            transform: scale(1.1);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: var(--gradient-dark);
+            position: relative;
+            overflow: hidden;
+            padding-top: 100px;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(62, 146, 204, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 212, 170, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(10, 36, 99, 0.2) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .hero-img{
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin-bottom: 100px;
+        }
+
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            left: 80%;
+            animation-delay: -5s;
+            animation-duration: 20s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 70px;
+            height: 70px;
+            top: 80%;
+            left: 20%;
+            animation-delay: -10s;
+            animation-duration: 25s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+            100% {
+                transform: translateY(0) rotate(360deg);
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin-top: 70px;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #fff, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+            max-width: 700px;
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(0, 212, 170, 0.3);
+            position: relative;
+            display: inline-block;
+        }
+
+        .highlight:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 40px;
+            background: var(--gradient-accent);
+            color: var(--light);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .cta-button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s;
+            z-index: -1;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .cta-button:hover:before {
+            left: 100%;
+        }
+
+        .stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 60px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 5px;
+            display: block;
+            text-shadow: 0 0 15px rgba(0, 212, 170, 0.5);
+        }
+
+        .stat-text {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Features Section */
+        .features {
+            background-color: var(--darker);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 80px;
+            position: relative;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 5px;
+            background: var(--accent);
+            border-radius: 5px;
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient-accent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px);
+            border-color: var(--accent);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .feature-card:hover:before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            font-size: 3.5rem;
+            color: var(--accent);
+            margin-bottom: 25px;
+            display: inline-block;
+            transition: var(--transition);
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .feature-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        /* Interactive Map Section */
+        .map-section {
+            background: var(--gradient);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-container {
+            position: relative;
+            height: 600px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #chinaMap {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Стили для Leaflet карты */
+        .leaflet-container {
+            font-family: 'Montserrat', sans-serif;
+            background: #1a1a2e !important;
+        }
+
+        .leaflet-tile {
+            filter: brightness(0.6) contrast(1.2) saturate(1.2);
+        }
+
+        .leaflet-control-zoom a {
+            background-color: rgba(13, 17, 23, 0.9) !important;
+            color: var(--light) !important;
+            border: 1px solid rgba(0, 212, 170, 0.3) !important;
+        }
+
+        .leaflet-control-zoom a:hover {
+            background-color: rgba(0, 212, 170, 0.2) !important;
+        }
+
+        .leaflet-control-attribution{
+            display: none  !important;  
+        }
+
+        .custom-marker {
+            background: var(--accent);
+            border-radius: 50%;
+            width: 24px !important;
+            height: 24px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px var(--accent);
+            border: 2px solid white;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .custom-marker:hover {
+            transform: scale(1.5);
+            box-shadow: 0 0 25px var(--accent);
+        }
+
+        .custom-marker.active {
+            transform: scale(1.8);
+            box-shadow: 0 0 30px var(--accent);
+            z-index: 1000 !important;
+        }
+
+        .custom-marker:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0.3;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0.5;
+            }
+            70% {
+                transform: translate(-50%, -50%) scale(1.5);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        .marker-label {
+            background: rgba(9, 12, 16, 0.9);
+            color: var(--light);
+            padding: 8px 15px;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            border: 1px solid rgba(0, 212, 170, 0.3);
+            box-shadow: var(--shadow);
+            white-space: nowrap;
+            backdrop-filter: blur(5px);
+            transform: translateY(-10px);
+            opacity: 0;
+            transition: var(--transition);
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .custom-marker:hover .marker-label {
+            opacity: 1;
+            transform: translateY(-15px);
+        }
+
+        .point-info {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(9, 12, 16, 0.9);
+            border-radius: var(--border-radius-sm);
+            padding: 25px;
+            max-width: 400px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 212, 170, 0.3);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 10;
+            box-shadow: var(--shadow);
+        }
+
+        .point-info.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .point-info h3 {
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .point-info p {
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .point-details {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .point-details p {
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .point-details strong {
+            color: var(--accent);
+        }
+
+        .points-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .point-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-sm);
+            padding: 20px;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .point-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .point-item.active {
+            background: rgba(0, 212, 170, 0.2);
+            border-color: var(--accent);
+            box-shadow: 0 5px 15px rgba(0, 212, 170, 0.2);
+        }
+
+        .point-item i {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        /* Calculator Section */
+        .calculator {
+            background-color: var(--darker);
+        }
+
+        .calculator-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .calculator-form {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .calt{
+            color: black;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 18px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius-sm);
+            color: var(--light);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 15px rgba(0, 212, 170, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .calculator-result {
+            background: var(--gradient-accent);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .result-price {
+            font-size: 4rem;
+            font-weight: 800;
+            margin: 20px 0;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Guarantee Section */
+        .guarantee {
+            background: var(--gradient-dark);
+        }
+
+        .guarantee-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .guarantee-badge {
+            background: var(--gradient-accent);
+            border-radius: var(--border-radius);
+            padding: 50px 40px;
+            text-align: center;
+            box-shadow: var(--shadow-hover);
+            position: relative;
+            overflow: hidden;
+            animation: badgeGlow 3s infinite alternate;
+        }
+
+        @keyframes badgeGlow {
+            0% {
+                box-shadow: 0 10px 30px rgba(0, 212, 170, 0.3);
+            }
+            100% {
+                box-shadow: 0 15px 40px rgba(0, 212, 170, 0.5);
+            }
+        }
+
+        .guarantee-badge:before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            transform: rotate(30deg);
+            opacity: 0.3;
+            animation: moveBackground 20s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            0% {
+                transform: rotate(30deg) translate(0, 0);
+            }
+            100% {
+                transform: rotate(30deg) translate(30px, 30px);
+            }
+        }
+
+        .guarantee-badge h3 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .guarantee-badge i {
+            font-size: 5rem;
+            margin-top: 20px;
+            display: block;
+        }
+
+        /* Process Section */
+        .process {
+            background-color: var(--darker);
+        }
+
+        .process-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-top: 80px;
+        }
+
+        .process-steps:before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 1;
+        }
+
+        .process-step {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            padding: 0 20px;
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0 auto 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .process-step:hover .step-number {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .step-content {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius-sm);
+            padding: 30px 20px;
+            transition: var(--transition);
+        }
+
+        .process-step:hover .step-content {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-10px);
+        }
+
+        /* Contacts Section */
+        .contacts {
+            background: var(--gradient);
+        }
+
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .contact-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            text-align: center;
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .contact-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-10px);
+            border-color: var(--accent);
+        }
+
+        .contact-icon {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 25px;
+            transition: var(--transition);
+        }
+
+        .contact-card:hover .contact-icon {
+            transform: scale(1.2);
+        }
+
+        .contact-form {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            padding: 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #06090d;
+            padding: 70px 0 30px;
+            text-align: center;
+            border-top: 1px solid rgba(0, 212, 170, 0.1);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .footer-logo {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--light);
+        }
+
+        .footer-links h4 {
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: var(--light);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+            padding-left: 5px;
+        }
+
+        .copyright {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            font-size: 1.5rem;
+            text-decoration: none;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1200px) {
+            .hero h1 {
+                font-size: 3.2rem;
+            }
+            
+            .calculator-container,
+            .guarantee-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .process-steps {
+                flex-direction: column;
+                gap: 60px;
+            }
+            
+            .process-steps:before {
+                width: 5px;
+                height: 100%;
+                left: 40px;
+                top: 0;
+            }
+            
+            .process-step {
+                display: flex;
+                align-items: flex-start;
+                text-align: left;
+                gap: 30px;
+            }
+            
+            .step-number {
+                margin: 0;
+                flex-shrink: 0;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .mobile-menu {
+                position: fixed;
+                top: 90px;
+                left: 0;
+                width: 100%;
+                background: rgba(9, 12, 16, 0.98);
+                padding: 30px;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                transform: translateY(-100%);
+                opacity: 0;
+                transition: var(--transition);
+                z-index: 999;
+                border-bottom: 1px solid rgba(0, 212, 170, 0.2);
+                backdrop-filter: blur(15px);
+            }
+            
+            .mobile-menu.active {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .section-title {
+                font-size: 2.5rem;
+            }
+            
+            section {
+                padding: 80px 0;
+            }
+            
+            .stats {
+                justify-content: center;
+            }
+            
+            .point-info {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                max-width: 100%;
+                margin-top: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.3rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+                margin-bottom: 60px;
+            }
+            
+            .feature-card,
+            .contact-card,
+            .contact-form,
+            .calculator-form {
+                padding: 30px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
+            .result-price {
+                font-size: 3rem;
+            }
+            
+            .map-container {
+                height: 400px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .cta-button {
+                padding: 15px 30px;
+                font-size: 1rem;
+            }
+            
+            .stat-number {
+                font-size: 2.5rem;
+            }
+            
+            .feature-card,
+            .contact-card,
+            .contact-form,
+            .calculator-form {
+                padding: 25px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .points-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <div class="container header-container">
+            <a href="#" class="logo">
+                <i class="fas fa-shipping-fast logo-icon"></i>
+                <span>China-Russia Logistics</span>
+            </a>
+            
+            <nav class="nav-links" id="navLinks">
+                <a href="#features">Преимущества</a>
+                <a href="#map">Точки отправления</a>
+                <a href="#calculator">Калькулятор</a>
+                <a href="#process">Процесс работы</a>
+                <a href="#guarantee">Гарантия</a>
+                <a href="#contacts">Контакты</a>
+            </nav>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="#features">Преимущества</a>
+            <a href="#map">Точки отправления</a>
+            <a href="#calculator">Калькулятор</a>
+            <a href="#process">Процесс работы</a>
+            <a href="#guarantee">Гарантия</a>
+            <a href="#contacts">Контакты</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="floating-elements">
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+        </div>
+        
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="animate__animated animate__fadeInDown">Контейнерные грузоперевозки <span class="highlight">Китай - Россия</span></h1>
+                <p class="animate__animated animate__fadeIn animate__delay-1s">Прямые поставки от <span class="highlight">7 ключевых точек</span> в Китае. Работаем напрямую с китайским юр. лицом, что гарантирует <span class="highlight">лучшие цены</span> и полный контроль на всех этапах доставки. Опыт более 10 лет на рынке международных перевозок.</p>
+                <a href="#calculator" class="cta-button animate__animated animate__fadeInUp animate__delay-2s">
+                    <i class="fas fa-calculator"></i> Рассчитать стоимость
+                </a>
+                
+                <div class="stats animate__animated animate__fadeInUp animate__delay-3s">
+                    
+                    <div class="stat-item">
+                        <span class="stat-number" id="stat2">0</span>
+                        <span class="stat-text">доставленных контейнеров</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="stat3">0</span>
+                        <span class="stat-text">довольных клиентов</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="stat4">0</span>
+                        <span class="stat-text">лет на рынке</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img src="россия - китай.png" alt="" class="hero-img">
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Наши преимущества</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Прямая работа с Китаем</h3>
+                    <p>Собственное юридическое лицо в Китае позволяет минимизировать издержки и контролировать каждый этап перевозки. Мы работаем без посредников, что обеспечивает максимальную эффективность.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <h3>Гарантия лучшей цены</h3>
+                    <p>Мы предлагаем оптимальные тарифы благодаря прямым договорам с перевозчиками и отсутствию посредников. Если найдете цену ниже - сделаем специальное предложение!</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Полная ответственность</h3>
+                    <p>Берем на себя все этапы перевозки: от загрузки в Китае до таможенного оформления и доставки в России. Страхуем груз и гарантируем сохранность.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Соблюдение сроков</h3>
+                    <p>Точное планирование логистических маршрутов и контроль на каждом этапе позволяют нам гарантировать соблюдение оговоренных сроков доставки.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>Круглосуточная поддержка</h3>
+                    <p>Наши специалисты готовы ответить на ваши вопросы 24/7. Мы сопровождаем ваш груз от момента загрузки до получения.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Оптимизация логистики</h3>
+                    <p>Анализируем каждый маршрут и предлагаем оптимальные решения для сокращения сроков и стоимости доставки вашего груза.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Map Section -->
+    <section class="map-section" id="map">
+        <div class="container">
+            <h2 class="section-title">7 точек отправления в Китае</h2>
+            
+            <div class="map-container">
+                <div id="chinaMap"></div>
+                
+                <div class="point-info" id="pointInfo">
+                    <h3 id="pointTitle">Выберите город на карте</h3>
+                    <p id="pointDescription">Нажмите на маркер города на карте или выберите из списка ниже, чтобы узнать подробности о точке отправления.</p>
+                    <div class="point-details" id="pointDetails"></div>
+                </div>
+            </div>
+            
+            <div class="points-list">
+                <div class="point-item" data-point="shanghai">
+                    <i class="fas fa-anchor"></i>
+                    <h4>Шанхай</h4>
+                    <p>Крупнейший порт Китая</p>
+                </div>
+                
+                <div class="point-item" data-point="guangzhou">
+                    <i class="fas fa-warehouse"></i>
+                    <h4>Гуанчжоу</h4>
+                    <p>Южный логистический хаб</p>
+                </div>
+                
+                <div class="point-item" data-point="ningbo">
+                    <i class="fas fa-ship"></i>
+                    <h4>Нинбо</h4>
+                    <p>Важный портовый город</p>
+                </div>
+                
+                <div class="point-item" data-point="shenzhen">
+                    <i class="fas fa-industry"></i>
+                    <h4>Шэньчжэнь</h4>
+                    <p>Технологический и логистический центр</p>
+                </div>
+                
+                <div class="point-item" data-point="qingdao">
+                    <i class="fas fa-anchor"></i>
+                    <h4>Циндао</h4>
+                    <p>Порт на восточном побережье</p>
+                </div>
+                
+                <div class="point-item" data-point="tianjin">
+                    <i class="fas fa-truck-loading"></i>
+                    <h4>Тяньцзинь</h4>
+                    <p>Северный морской порт</p>
+                </div>
+                
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Calculator Section -->
+    <section class="calculator" id="calculator">
+        <div class="container">
+            <h2 class="section-title">Калькулятор стоимости перевозки</h2>
+            
+            <div class="calculator-container">
+                <div class="calculator-form">
+                    <form id="calcForm">
+                        <div class="form-group">
+                            <label for="fromCity">Город отправления (Китай)</label>
+                            <select id="fromCity" class="form-control" required>
+                                <option class="calt" value="">Выберите город</option>
+                                <option class="calt" value="shanghai">Шанхай</option>
+                                <option class="calt" value="guangzhou">Гуанчжоу</option>
+                                <option class="calt" value="ningbo">Нинбо</option>
+                                <option class="calt" value="shenzhen">Шэньчжэнь</option>
+                                <option class="calt" value="qingdao">Циндао</option>
+                                <option class="calt" value="tianjin">Тяньцзинь</option>
+                                <option class="calt" value="suzhou">Сучжоу</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="toCity">Город назначения (Россия)</label>
+                            <select id="toCity" class="form-control" required>
+                                <option class="calt" value="">Выберите город</option>
+                                <option class="calt" value="moscow">Москва</option>
+                                <option class="calt" value="spb">Санкт-Петербург</option>
+                                <option class="calt" value="novosibirsk">Новосибирск</option>
+                                <option class="calt" value="ekb">Екатеринбург</option>
+                                <option class="calt" value="vladivostok">Владивосток</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="containerType">Тип контейнера</label>
+                                <select id="containerType" class="form-control" required>
+                                    <option class="calt" value="20ft">20 футов (20ft)</option>
+                                    <option class="calt" value="40ft">40 футов (40ft)</option>
+                                    <option class="calt" value="40hq">40 футов HQ (40ft High Cube)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="cargoType">Тип груза</label>
+                                <select id="cargoType" class="form-control" required>
+                                    <option class="calt" value="general">Генеральный груз</option>
+                                    <option class="calt" value="dangerous">Опасный груз</option>
+                                    <option class="calt" value="perishable">Скоропортящийся груз</option>
+                                    <option class="calt" value="oversized">Крупногабаритный груз</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="insurance">Страхование груза</label>
+                            <select id="insurance" class="form-control" required>
+                                <option class="calt" value="no">Без страхования</option>
+                                <option class="calt" value="yes">Со страхованием (2% от стоимости груза)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cargoValue">Стоимость груза (USD)</label>
+                            <input type="number" id="cargoValue" class="form-control" min="0" step="1000" placeholder="Например: 50000" required>
+                        </div>
+                        
+                        <button type="submit" class="cta-button" style="width: 100%;">
+                            <i class="fas fa-calculator"></i> Рассчитать стоимость
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="calculator-result">
+                    <h3>Расчетная стоимость</h3>
+                    <p>Перевозка контейнера из <span id="resultFrom">Шанхая</span> в <span id="resultTo">Москву</span></p>
+                    <div class="result-price">$<span id="resultPrice">0</span></div>
+                    <p>Срок доставки: <span id="resultTime">14-21 день</span></p>
+                    <p id="resultInsurance">Страхование не включено</p>
+                    <button id="requestQuote" class="cta-button" style="margin-top: 20px; background: rgba(255,255,255,0.2);">
+                        <i class="fas fa-file-invoice-dollar"></i> Запросить точный расчет
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="process" id="process">
+        <div class="container">
+            <h2 class="section-title">Процесс работы</h2>
+            <p style="text-align: center; max-width: 800px; margin: 0 auto 50px; font-size: 1.2rem;">Мы обеспечиваем полный цикл перевозки от заказа до доставки. Каждый этап контролируется нашими специалистами.</p>
+            
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Заявка и расчет</h3>
+                        <p>Вы оставляете заявку, мы рассчитываем стоимость и сроки доставки, согласовываем детали.</p>
+                    </div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Погрузка в Китае</h3>
+                        <p>Наши сотрудники в Китае контролируют погрузку и оформление документов на месте.</p>
+                    </div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Таможенное оформление</h3>
+                        <p>Профессиональное таможенное оформление в Китае и России с минимальными сроками.</p>
+                    </div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Доставка и получение</h3>
+                        <p>Контроль перевозки, информирование о статусе груза и доставка до указанного адреса.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Guarantee Section -->
+    <section class="guarantee" id="guarantee">
+        <div class="container">
+            <div class="guarantee-content">
+                <div class="guarantee-text">
+                    <h2 class="section-title">Гарантия лучшей цены</h2>
+                    <p>Мы уверены в конкурентоспособности наших тарифов и готовы предоставить <span class="highlight">гарантию лучшей цены</span> на рынке контейнерных перевозок из Китая в Россию.</p>
+                    <p>Благодаря прямым контрактам с транспортными компаниями и собственному юридическому лицу в Китае, мы исключаем дополнительные наценки посредников.</p>
+                    <p>Если вы найдете аналогичное предложение по более низкой цене - мы готовы сделать <span class="highlight">специальное предложение</span> с улучшенными условиями.</p>
+                    <ul style="margin-top: 30px; padding-left: 20px;">
+                        <li style="margin-bottom: 10px;">Прямые договоры с перевозчиками</li>
+                        <li style="margin-bottom: 10px;">Собственное юр. лицо в Китае</li>
+                        <li style="margin-bottom: 10px;">Оптимизация логистических маршрутов</li>
+                        <li style="margin-bottom: 10px;">Отсутствие посреднических наценок</li>
+                    </ul>
+                </div>
+                
+                <div class="guarantee-badge">
+                    <h3>Гарантия цены</h3>
+                    <p>Мы предоставим лучшую цену на рынке или сделаем специальное предложение!</p>
+                    <i class="fas fa-award"></i>
+                    <p style="margin-top: 20px; font-size: 1.2rem; font-weight: 700;">Нашли дешевле?<br>Сделаем скидку!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contacts Section -->
+    <section class="contacts" id="contacts">
+        <div class="container">
+            <h2 class="section-title">Контакты</h2>
+            
+            <div class="contacts-grid">
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <h3>Телефон</h3>
+                    <p>+7 (999) 123-45-67 (Россия)</p>
+                    <p>+86 (138) 0013-8000 (Китай)</p>
+                    <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">Круглосуточная поддержка</p>
+                </div>
+                
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>Email</h3>
+                    <p>info@china-russia-logistics.ru</p>
+                    <p>sales@china-russia-logistics.ru</p>
+                    <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">Ответ в течение 1 часа</p>
+                </div>
+                
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Режим работы</h3>
+                    <p>Пн-Пт: 9:00-18:00 (МСК)</p>
+                    <p>Сб-Вс: по договоренности</p>
+                    <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">Экстренные вызовы 24/7</p>
+                </div>
+                
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3>Офисы</h3>
+                    <p>Москва, ул. Логистическая, 15</p>
+                    <p>Шанхай, Pudong District, 世纪大道 100号</p>
+                    <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">Онлайн-консультации доступны</p>
+                </div>
+            </div>
+            
+            <div class="contact-form">
+                <h3 style="text-align: center; margin-bottom: 40px; font-size: 1.8rem;">Отправить запрос на расчет</h3>
+                <form id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contactName">Ваше имя</label>
+                            <input type="text" id="contactName" class="form-control" placeholder="Иван Иванов" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contactPhone">Телефон</label>
+                            <input type="tel" id="contactPhone" class="form-control" placeholder="+7 (999) 123-45-67" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactEmail">Email</label>
+                        <input type="email" id="contactEmail" class="form-control" placeholder="example@mail.ru" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactMessage">Детали перевозки</label>
+                        <textarea id="contactMessage" class="form-control" rows="5" placeholder="Укажите пункты отправления и назначения, тип и количество груза, желаемые сроки..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="cta-button" style="width: 100%;">
+                        <i class="fas fa-paper-plane"></i> Отправить запрос
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div class="footer-logo">
+                        <i class="fas fa-shipping-fast"></i> China-Russia Logistics
+                    </div>
+                    <p>Контейнерные грузоперевозки Китай-Россия. Прямые поставки от 7 точек отправления. Работаем напрямую с китайским юр. лицом. Гарантия лучшей цены.</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Навигация</h4>
+                    <ul>
+                        <li><a href="#features">Преимущества</a></li>
+                        <li><a href="#map">Точки отправления</a></li>
+                        <li><a href="#calculator">Калькулятор</a></li>
+                        <li><a href="#process">Процесс работы</a></li>
+                        <li><a href="#guarantee">Гарантия</a></li>
+                        <li><a href="#contacts">Контакты</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Услуги</h4>
+                    <ul>
+                        <li><a href="#!">Контейнерные перевозки</a></li>
+                        <li><a href="#!">Таможенное оформление</a></li>
+                        <li><a href="#!">Страхование грузов</a></li>
+                        <li><a href="#!">Сборные грузы</a></li>
+                        <li><a href="#!">Экспедирование</a></li>
+                        <li><a href="#!">Консультации</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2025 China-Russia Logistics. Все права защищены.</p>
+                <p>Работаем напрямую с китайским юр. лицом. Гарантия лучшей цены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to top button -->
+    <a href="#" class="back-to-top" id="backToTop">
+        <i class="fas fa-chevron-up"></i>
+    </a>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            mobileMenuBtn.innerHTML = mobileMenu.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+        
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+        
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            const backToTop = document.getElementById('backToTop');
+            
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+            
+            // Show/hide back to top button
+            if (window.scrollY > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+        
+        // Animated statistics counter
+        function animateCounter(elementId, targetValue, duration = 2000) {
+            const element = document.getElementById(elementId);
+            const increment = targetValue / (duration / 16); // 60fps
+            let currentValue = 0;
+            
+            const timer = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= targetValue) {
+                    element.textContent = targetValue.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(currentValue).toLocaleString();
+                }
+            }, 16);
+        }
+        
+        // Start counter animation when stats section is in view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounter('stat1', 7, 1500);
+                    animateCounter('stat2', 1240, 2000);
+                    animateCounter('stat3', 560, 1800);
+                    animateCounter('stat4', 10, 1200);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        observer.observe(document.querySelector('.hero'));
+        
+        // Interactive map with Leaflet
+        let map;
+        let markers = {};
+        let activeMarker = null;
+        
+        // Points data with coordinates (lat, lng for China cities)
+        const pointsData = {
+            shanghai: {
+                title: "Шанхай",
+                description: "Крупнейший порт Китая и один из самых загруженных портов мира. Отсюда отправляется более 30% всех контейнеров в Россию.",
+                details: "<p><strong>Особенности:</strong> Высокая частота рейсов, оптимальные тарифы, развитая логистическая инфраструктура.</p><p><strong>Срок доставки в Москву:</strong> 18-24 дня</p><p><strong>Средняя стоимость 40ft контейнера:</strong> $4200-4800</p>",
+                coordinates: [31.2304, 121.4737] // Shanghai coordinates
+            },
+            guangzhou: {
+                title: "Гуанчжоу",
+                description: "Ключевой южный логистический хаб Китая. Специализируется на электронике, текстиле и потребительских товарах.",
+                details: "<p><strong>Особенности:</strong> Идеально для грузов из провинции Гуандун, регулярные рейсы, современные терминалы.</p><p><strong>Срок доставки в Москву:</strong> 25-30 дней</p><p><strong>Средняя стоимость 40ft контейнера:</strong> $4500-5200</p>",
+                coordinates: [23.1291, 113.2644] // Guangzhou coordinates
+            },
+            ningbo: {
+                title: "Нинбо",
+                description: "Один из самых быстрорастущих портов Китая. Специализируется на контейнерных перевозках и сырьевых товарах.",
+                details: "<p><strong>Особенности:</strong> Современное оборудование, высокая эффективность обработки, прямые рейсы в Владивосток.</p><p><strong>Срок доставки в Москву:</strong> 20-26 дней</p><p><strong>Средняя стоимость 40ft контейнера:</strong> $4100-4700</p>",
+                coordinates: [29.8683, 121.5440] // Ningbo coordinates
+            },
+            shenzhen: {
+                title: "Шэньчжэнь",
+                description: "Технологический и логистический центр Южного Китая. Основной порт для электроники и высокотехнологичных товаров.",
+                details: "<p><strong>Особенности:</strong> Специализация на электронике, высокая безопасность грузов, современные склады временного хранения.</p><p><strong>Срок доставки в Москву:</strong> 22-28 дней</p><p><strong>Средняя стоимость 40ft контейнера:</strong> $4400-5000</p>",
+                coordinates: [22.5431, 114.0579] // Shenzhen coordinates
+            },
+            qingdao: {
+                title: "Циндао",
+                description: "Крупный порт на восточном побережье Китая. Специализируется на сырьевых товарах, оборудовании и автомобильных запчастях.",
+                details: "<p><strong>Особенности:</strong> Удобное расположение для грузов из Северного Китая, развитая железнодорожная логистика.</p><p><strong>Срок доставки в Москву:</strong> 18-22 дня</p><p><strong>Средняя стоимость 40ft контейнера:</strong> $4000-4600</p>",
+                coordinates: [36.0671, 120.3826] // Qingdao coordinates
+            },
+            tianjin: {
+                title: "Тяньцзинь",
+                description: "Северный морской порт, обслуживающий Пекин и промышленные регионы Северного Китая.",
+                details: "<p><strong>Особенности:</strong> Идеально для грузов из Северного Китая, развитая контейнерная инфраструктура, прямые ж/д сообщения с Россией.</p><p><strong>Срок доставки в Москву:</strong> 16-20 дней</p><p><strong>Средняя стоимость 40ft контейнера:</strong> $3800-4400</p>",
+                coordinates: [39.0842, 117.2010] // Tianjin coordinates
+            },
+            suzhou: {
+                title: "Сучжоу",
+                description: "Крупный промышленный центр с развитой логистической инфраструктурой. Специализируется на оборудовании и промышленных товарах.",
+                details: "<p><strong>Особенности:</strong> Промышленная зона с прямым доступом к портам Шанхая, удобная логистика для сборных грузов.</p><p><strong>Срок доставки в Москву:</strong> 19-25 дней</p><p><strong>Средняя стоимость 40ft контейнера:</strong> $4200-4800</p>",
+                coordinates: [31.2989, 120.5853] // Suzhou coordinates
+            }
+        };
+        
+        // Initialize map when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the map
+            map = L.map('chinaMap').setView([35.0, 105.0], 4); // Center on China
+            
+            // Add tile layer (map background)
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 10,
+                minZoom: 3
+            }).addTo(map);
+            
+            // Create custom marker icon
+            const customIcon = L.divIcon({
+                className: 'custom-marker',
+                iconSize: [24, 24],
+                html: '<div class="marker-pulse"></div>'
+            });
+            
+            // Add markers for each point
+            Object.keys(pointsData).forEach(pointKey => {
+                const point = pointsData[pointKey];
+                
+                // Create marker
+                const marker = L.marker(point.coordinates, {
+                    icon: customIcon,
+                    title: point.title
+                }).addTo(map);
+                
+                // Store marker reference
+                markers[pointKey] = marker;
+                
+                // Add click event to marker
+                marker.on('click', function() {
+                    activatePoint(pointKey);
+                });
+                
+                // Add hover effect
+                marker.on('mouseover', function() {
+                    if (activeMarker !== pointKey) {
+                        marker._icon.classList.add('active');
+                    }
+                });
+                
+                marker.on('mouseout', function() {
+                    if (activeMarker !== pointKey) {
+                        marker._icon.classList.remove('active');
+                    }
+                });
+            });
+            
+            // Fit map to show all markers
+            const markerGroup = L.featureGroup(Object.values(markers));
+            map.fitBounds(markerGroup.getBounds().pad(0.1));
+            
+            // Activate Shanghai by default after a short delay
+            setTimeout(() => {
+                activatePoint('shanghai');
+            }, 1000);
+        });
+        
+        // Function to activate a point
+        function activatePoint(pointKey) {
+            const point = pointsData[pointKey];
+            
+            // Update active marker
+            if (activeMarker) {
+                markers[activeMarker]._icon.classList.remove('active');
+            }
+            
+            markers[pointKey]._icon.classList.add('active');
+            activeMarker = pointKey;
+            
+            // Pan to marker (smoothly)
+            map.panTo(point.coordinates, {
+                animate: true,
+                duration: 1
+            });
+            
+            // Update point info display
+            document.getElementById('pointTitle').textContent = point.title;
+            document.getElementById('pointDescription').textContent = point.description;
+            document.getElementById('pointDetails').innerHTML = point.details;
+            document.getElementById('pointInfo').classList.add('active');
+            
+            // Update active point in list
+            document.querySelectorAll('.point-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`.point-item[data-point="${pointKey}"]`).classList.add('active');
+            
+            // Update calculator dropdown if needed
+            const fromCitySelect = document.getElementById('fromCity');
+            if (fromCitySelect.value !== pointKey) {
+                fromCitySelect.value = pointKey;
+            }
+        }
+        
+        // Point list items click handlers
+        document.querySelectorAll('.point-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const pointKey = item.dataset.point;
+                activatePoint(pointKey);
+            });
+        });
+        
+        // Calculator functionality
+        const calcForm = document.getElementById('calcForm');
+        const resultFrom = document.getElementById('resultFrom');
+        const resultTo = document.getElementById('resultTo');
+        const resultPrice = document.getElementById('resultPrice');
+        const resultTime = document.getElementById('resultTime');
+        const resultInsurance = document.getElementById('resultInsurance');
+        const requestQuote = document.getElementById('requestQuote');
+        
+        // Base prices for calculation
+        const basePrices = {
+            shanghai: { moscow: 4200, spb: 4500, novosibirsk: 4800, ekb: 4600, vladivostok: 3200 },
+            guangzhou: { moscow: 4500, spb: 4800, novosibirsk: 5100, ekb: 4900, vladivostok: 3800 },
+            ningbo: { moscow: 4100, spb: 4400, novosibirsk: 4700, ekb: 4500, vladivostok: 3300 },
+            shenzhen: { moscow: 4400, spb: 4700, novosibirsk: 5000, ekb: 4800, vladivostok: 3700 },
+            qingdao: { moscow: 4000, spb: 4300, novosibirsk: 4600, ekb: 4400, vladivostok: 3100 },
+            tianjin: { moscow: 3800, spb: 4100, novosibirsk: 4400, ekb: 4200, vladivostok: 2900 },
+            suzhou: { moscow: 4200, spb: 4500, novosibirsk: 4800, ekb: 4600, vladivostok: 3300 }
+        };
+        
+        // City names for display
+        const cityNames = {
+            shanghai: "Шанхай",
+            guangzhou: "Гуанчжоу", 
+            ningbo: "Нинбо",
+            shenzhen: "Шэньчжэнь",
+            qingdao: "Циндао",
+            tianjin: "Тяньцзинь",
+            suzhou: "Сучжоу",
+            moscow: "Москву",
+            spb: "Санкт-Петербург",
+            novosibirsk: "Новосибирск",
+            ekb: "Екатеринбург",
+            vladivostok: "Владивосток"
+        };
+        
+        // Delivery times
+        const deliveryTimes = {
+            shanghai: { moscow: "18-24 дня", spb: "20-26 дней", novosibirsk: "25-30 дней", ekb: "22-28 дней", vladivostok: "7-12 дней" },
+            guangzhou: { moscow: "25-30 дней", spb: "27-32 дня", novosibirsk: "30-35 дней", ekb: "28-33 дня", vladivostok: "12-18 дней" },
+            ningbo: { moscow: "20-26 дней", spb: "22-28 дней", novosibirsk: "27-32 дня", ekb: "25-30 дней", vladivostok: "8-14 дней" },
+            shenzhen: { moscow: "22-28 дней", spb: "24-30 дней", novosibirsk: "28-33 дня", ekb: "26-31 день", vladivostok: "10-16 дней" },
+            qingdao: { moscow: "18-22 дня", spb: "20-24 дня", novosibirsk: "25-29 дней", ekb: "23-27 дней", vladivostok: "6-11 дней" },
+            tianjin: { moscow: "16-20 дней", spb: "18-22 дня", novosibirsk: "23-27 дней", ekb: "21-25 дней", vladivostok: "5-10 дней" },
+            suzhou: { moscow: "19-25 дней", spb: "21-27 дней", novosibirsk: "26-31 день", ekb: "24-29 дней", vladivostok: "8-13 дней" }
+        };
+        
+        calcForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const fromCity = document.getElementById('fromCity').value;
+            const toCity = document.getElementById('toCity').value;
+            const containerType = document.getElementById('containerType').value;
+            const cargoType = document.getElementById('cargoType').value;
+            const insurance = document.getElementById('insurance').value;
+            const cargoValue = parseFloat(document.getElementById('cargoValue').value) || 0;
+            
+            if (!fromCity || !toCity) {
+                alert("Пожалуйста, выберите города отправления и назначения");
+                return;
+            }
+            
+            // Calculate base price
+            let price = basePrices[fromCity][toCity];
+            
+            // Adjust for container type
+            if (containerType === "20ft") price *= 0.7;
+            if (containerType === "40hq") price *= 1.1;
+            
+            // Adjust for cargo type
+            if (cargoType === "dangerous") price *= 1.3;
+            if (cargoType === "perishable") price *= 1.2;
+            if (cargoType === "oversized") price *= 1.4;
+            
+            // Add insurance if selected
+            let insuranceCost = 0;
+            if (insurance === "yes") {
+                insuranceCost = cargoValue * 0.02;
+                resultInsurance.textContent = `Страхование включено: $${insuranceCost.toFixed(0)}`;
+            } else {
+                resultInsurance.textContent = "Страхование не включено";
+            }
+            
+            // Update result display
+            resultFrom.textContent = cityNames[fromCity];
+            resultTo.textContent = cityNames[toCity];
+            resultPrice.textContent = Math.round(price + insuranceCost);
+            resultTime.textContent = deliveryTimes[fromCity][toCity];
+            
+            // Animate the price change
+            const priceElement = document.getElementById('resultPrice');
+            const targetPrice = Math.round(price + insuranceCost);
+            let currentPrice = parseInt(priceElement.textContent) || 0;
+            
+            const priceIncrement = Math.abs(targetPrice - currentPrice) / 30;
+            const timer = setInterval(() => {
+                if (currentPrice < targetPrice) {
+                    currentPrice += priceIncrement;
+                    if (currentPrice >= targetPrice) {
+                        currentPrice = targetPrice;
+                        clearInterval(timer);
+                    }
+                } else {
+                    currentPrice -= priceIncrement;
+                    if (currentPrice <= targetPrice) {
+                        currentPrice = targetPrice;
+                        clearInterval(timer);
+                    }
+                }
+                priceElement.textContent = Math.round(currentPrice);
+            }, 30);
+        });
+        
+        // Request quote button
+        requestQuote.addEventListener('click', () => {
+            alert("Запрос на точный расчет отправлен! Наш менеджер свяжется с вами в течение 30 минут для уточнения деталей и подготовки индивидуального предложения.");
+        });
+        
+        // Contact form submission
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert("Спасибо за ваш запрос! Мы свяжемся с вами в ближайшее время для обсуждения деталей перевозки и подготовки коммерческого предложения.");
+            e.target.reset();
+        });
+        
+        // Animate elements on scroll
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    
+                    // Add specific animations for different elements
+                    if (entry.target.classList.contains('feature-card')) {
+                        entry.target.style.transitionDelay = `${0.1 * Array.from(entry.target.parentElement.children).indexOf(entry.target)}s`;
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        // Observe elements to animate
+        document.querySelectorAll('.feature-card, .point-item, .process-step, .contact-card, .guarantee-badge').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            scrollObserver.observe(el);
+        });
+    </script>
+</body>
+</html>
